@@ -1,6 +1,8 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
+import exerciseService from "../../services/exercises";
+import userService from "../../services/users";
 
 export default function ExerciseCreate(){
     const [username, setUsername] = useState(''); 
@@ -9,6 +11,12 @@ export default function ExerciseCreate(){
     const [date, setDate] = useState(new Date())
     const [duration, setDuration] = useState(0)
     const [users, setUsers] = useState(['Michel', 'Yossa', 'Ngambous'])
+
+    useEffect(() => {
+        userService().getUsers().then(({data}) => {
+            setUsers(data.map(e => e.username))
+        })
+    }, [setUsers])
 
     onsubmit = (e) => {
 
@@ -20,7 +28,9 @@ export default function ExerciseCreate(){
             duration
         }
 
-        console.log(exercise)
+        exerciseService().addExercise(exercise).then((res) => {
+            console.log(res)
+        }).catch(err => console.log(err))
 
        // window.location = '/'
     }
